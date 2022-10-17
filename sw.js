@@ -27,7 +27,8 @@ self.addEventListener('install', e =>{
     '/css/style.css',
     '/img/main.jpg',
     'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
-    '/js/app.js'
+    '/js/app.js',
+    '/img/no-img.jpg'
     ]);
  });
 
@@ -41,11 +42,34 @@ self.addEventListener('install', e =>{
 
 self.addEventListener('fetch', e=>{
 
-e.repondWith(caches.match( ))
+//--------5
+const respuesta= new Promise((resolve, reject)=>{
+let rechazada = false;
 
+const fallounaVez   =() =>{
+    if(rechazada){
+if(/\.(png|jpg)$/i.test(e.request.url)){
+ resolve(caches.match('img/no-image.jpg'));
+}else{
+    reject('No se encontro');
+}
+    }else{
+        rechazada = true
+    }
+
+}});
+ fetch(e.request).then(res=>{
+    res.ok? resolve(res) : fallounaVez();
+ }).catch(fallounaVez);
+
+ caches.match(e.request).then(res=>{
+    res ? resolve(res): fallounaVez();
+ }).catch(fallounaVez);
+
+e.repondWith();
 
 //----4
-
+/*
 if(e.request.url.includes('boottrap')){
    return e.repondWith(caches.match(e.request));
 }
